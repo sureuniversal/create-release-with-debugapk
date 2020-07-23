@@ -58,10 +58,6 @@ async function createReleaseAndUpload() {
     core.setOutput("upload_url", uploadUrl);
     const assetPath = core.getInput("asset_path", { required: true });
     const assetName = core.getInput("asset_name", { required: true });
-
-    const assetPath2 = core.getInput("asset_path2", { required: true });
-    const assetName2 = core.getInput("asset_name2", { required: true });
-
     const assetContentType = core.getInput("asset_content_type", {
       required: true
     });
@@ -85,26 +81,10 @@ async function createReleaseAndUpload() {
       data: fs.readFileSync(assetPath)
     });
 
-    // Setup headers for API call, see Octokit Documentation: https://octokit.github.io/rest.js/#octokit-routes-repos-upload-release-asset for more information
-    const headers = {
-      "content-type": assetContentType,
-      "content-length": contentLength(assetPath2)
-    };
-
-    // Upload a release asset
-    // API Documentation: https://developer.github.com/v3/repos/releases/#upload-a-release-asset
-    // Octokit Documentation: https://octokit.github.io/rest.js/#octokit-routes-repos-upload-release-asset
-    const uploadAssetResponse2 = await github.repos.uploadReleaseAsset({
-      url: uploadUrl,
-      headers,
-      name: assetName2,
-      data: fs.readFileSync(assetPath2)
-    });
-
     // Get the browser_download_url for the uploaded release asset from the response
     const {
       data: { browser_download_url: browserDownloadUrl }
-    } = uploadAssetResponse2;
+    } = uploadAssetResponse;
 
     // Set the output variable for use by other actions: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     core.setOutput("browser_download_url", browserDownloadUrl);
